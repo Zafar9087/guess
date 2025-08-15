@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+   <meta name="google-site-verification" content="wt5P5a6vtm-KoqKbKmCEs8A7Wav0xRFCMglrhT88T4w" />
+   <meta name="description" content="Играй в угадайку чисел с друзьями! Разные режимы, ачивки, рейтинг и весёлые соревнования. Проверь свою интуицию и стань чемпионом!">
+
+  <title>Профиль - Guess Game Modes</title>
+
+ <script type="module" src="firebase-auth.js"></script>
+<link rel="icon" type="image/x-icon" href="guess.jpg">
+  <style>
+    body {
+      background: #f6f6f6;
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1em 2em;
+      background: #fff;
+      border-bottom: 2px solid #eee;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .profile-info {
+      display: flex;
+      align-items: center;
+    }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 1em;
+    }
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .username {
+      font-size: 1.4em;
+      font-weight: 700;
+      color: #222;
+    }
+    .auth-buttons button {
+      padding: 0.5em 1.2em;
+      font-size: 1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #4f8cff;
+      color: white;
+      margin-left: 1em;
+      transition: background 0.3s;
+    }
+    .auth-buttons button:hover {
+      background-color: #357de0;
+    }
+    .Start {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 0.8em 1.5em;
+      font-size: 1.2em;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      background-color: #4f8cff;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 12px #0002;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .container {
+      max-width: 700px;
+      margin: 2em auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px #0002;
+      padding: 2em 2.5em;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5em;
+      margin-bottom: 1.5em;
+    }
+    .tab {
+      font-size: 1.1em;
+      font-weight: 600;
+      padding: 0.5em 1.5em;
+      background: #f6f6f6;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      color: #555;
+      transition: background 0.2s, color 0.2s;
+      border-bottom: 3px solid transparent;
+    }
+    .tab.active {
+      background: #fff;
+      color: #222;
+      border-bottom: 3px solid #4f8cff;
+    }
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    .modes-grid, .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5em;
+      margin-top: 1em;
+    }
+    .mode-card, .achievement-card {
+      border-radius: 16px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.15em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 80px;
+      box-shadow: 0 2px 12px #0002;
+      cursor: pointer;
+      transition: transform 0.2s;
+      text-align: center;
+    }
+    .mode-card:hover, .achievement-card:hover {
+      transform: scale(1.07);
+    }
+
+    .mode-imperator { background: linear-gradient(90deg, #d32f2f 0%, #ff5252 100%);}
+    .mode-loser { background: linear-gradient(90deg, #c2185b 0%, #e040fb 100%);}
+    .mode-ultrahard { background: linear-gradient(90deg, #6a1b9a 0%, #8e24aa 100%);}
+    .mode-detective { background: linear-gradient(90deg, #388e3c 0%, #43a047 100%);}
+    .mode-normal { background: linear-gradient(90deg, #fbc02d 0%, #ffd600 100%);}
+    .mode-practice { background: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%);}
+
+    .achievement-card {
+      background: linear-gradient(90deg, #fffde4 0%, #ffd700 100%);
+      color: #7c5c00;
+    }
+    @media (max-width: 600px) {
+  h1 {
+    font-size: 20px;
+  }
+  .container {
+    width: 95%;
+  }
+  .game-mode {
+    font-size: 16px;
+  }
+}
+
+/* Планшеты (601px до 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  h1 {
+    font-size: 26px;
+  }
+  .container {
+    width: 90%;
+  }
+  .game-mode {
+    font-size: 20px;
+  }
+}
+
+/* Телевизоры или очень широкие экраны (больше 1440px) */
+@media (min-width: 1441px) {
+  h1 {
+    font-size: 40px;
+  }
+  .container {
+    width: 70%;
+  }
+  .game-mode {
+    font-size: 28px;
+  }
+}
+.mode-speed {
+  background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+}
+
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="profile-info">
+      <div class="logo"><img id="avatar" src="https://upload.wikimedia.org/wikipedia/commons/8/89/HD_transparent_picture.png" /></div>
+      <div class="username" id="username">Гость</div>
+    </div>
+    <div class="auth-buttons">
+      <button id="login-btn" onclick="login()">Войти с Google</button>
+      <button id="logout-btn" onclick="logout()" style="display: none;">Выйти</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('modes')">Режимы</button>
+      <button class="tab" onclick="showTab('achievements')">Достижения</button>
+    </div>
+    <div id="modes" class="tab-content active">
+      <div class="modes-grid" id="modesGrid"></div>
+    </div>
+    <div id="achievements" class="tab-content">
+      <div class="achievements-grid" id="achievementsGrid"></div>
+    </div>
+  </div>
+  <a href="guess_game_modes (1).html">
+    <button class="Start">Start Game</button>
+  </a>
+  <button id="loserModButton" style="display: none;" onclick="startLoserMod()">Лузер-мод</button>
+
+
+<script>
+function renderUnlockedModes() {
+  const modesGrid = document.getElementById("modesGrid");
+  modesGrid.innerHTML = ""; // Очистим перед отрисовкой
+
+  const modeColors = {
+    "Normal": "mode-normal",
+    "Practice": "mode-practice",
+    "Loser": "mode-loser",
+    "Imperator": "mode-imperator",
+    "Ultra-hard": "mode-ultrahard",
+    "Detective": "mode-detective",
+    "Speed": "mode-speed" // ты можешь добавить CSS-класс если хочешь
+  };
+
+  unlockedModes.forEach(mode => {
+    const div = document.createElement("div");
+    div.className = "mode-card " + (modeColors[mode] || "mode-normal");
+    div.textContent = mode;
+    modesGrid.appendChild(div);
+  });
+}
+
+// После загрузки состояния вызываем отображение
+loadGameState();
+renderUnlockedModes();
+</script>
+<script>
+  let unlockedModes = ["Normal", "Practice", "Imperator", "Detective", "Ultra-hard", "Loser", "Speed"];
+
+  function loadGameState() {
+    // В будущем можешь загрузить из localStorage или базы данных
+  }
+
+  loadGameState();
+  renderUnlockedModes();
+</script>
+
+</body>
+</html>

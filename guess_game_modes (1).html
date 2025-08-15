@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google-site-verification" content="wt5P5a6vtm-KoqKbKmCEs8A7Wav0xRFCMglrhT88T4w" />
+    <meta name="description" content="Играй в угадайку чисел с друзьями! Разные режимы, ачивки, рейтинг и весёлые соревнования. Проверь свою интуицию и стань чемпионом!">
+
+    <title>Guess the Number Game</title>
+    <link rel="icon" type="image/x-icon" href="guess.jpg">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #222;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.5s, color 0.5s;
+        }
+        .container {
+            background: rgba(255,255,255,0.85);
+            padding: 2rem 3rem;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            text-align: center;
+            transition: background 0.5s;
+        }
+        h1 {
+            margin-bottom: 0.5em;
+            letter-spacing: 2px;
+        }
+        input[type="number"] {
+            padding: 0.5em;
+            font-size: 1.2em;
+            border-radius: 8px;
+            border: 1px solid #b0c4de;
+            width: 80px;
+            margin-right: 1em;
+        }
+        button {
+            padding: 0.5em 1.5em;
+            font-size: 1.1em;
+            border-radius: 8px;
+            border: none;
+            background: #4f8cff;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .score {
+            margin-top: 1em;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        .message {
+            margin-top: 1em;
+            font-size: 1.1em;
+            min-height: 2em;
+        }
+
+        body.imperator {
+            background: linear-gradient(135deg, #000, #b30000);
+            color: #fff;
+        }
+        body.imperator .container {
+            background: rgba(30,0,0,0.92);
+        }
+        body.imperator button {
+            background: #b30000;
+        }
+        body.imperator button:hover {
+            background: #ff0000;
+        }
+        body.imperator h1 {
+            color: #ff0000;
+            text-shadow: 0 0 10px #b30000;
+        }
+
+        body.detective {
+            background: linear-gradient(135deg, #2d1e13, #4b3621);
+            color: #f5e9da;
+        }
+        body.detective .container {
+            background: rgba(44, 34, 24, 0.95);
+        }
+        body.detective button {
+            background: #8d6748;
+        }
+        body.detective button:hover {
+            background: #5c3a1a;
+        }
+        body.detective h1 {
+            color: #ffb347;
+            text-shadow: 0 0 10px #8d6748;
+        }
+
+        body.ultrahard {
+            background: linear-gradient(135deg, #2a003f, #6f42c1);
+            color: #e0d7ff;
+        }
+        body.ultrahard .container {
+            background: rgba(47, 10, 73, 0.95);
+        }
+        body.ultrahard button {
+            background: #6f42c1;
+        }
+        body.ultrahard button:hover {
+            background: #4a1a85;
+        }
+        body.ultrahard h1 {
+            color: #d1b3ff;
+            text-shadow: 0 0 10px #6f42c1;
+        }
+
+        body.loser {
+            background: linear-gradient(135deg, #3f002a, #ff69b4);
+            color: #fff0f5;
+        }
+        body.loser .container {
+            background: rgba(73, 10, 47, 0.95);
+        }
+        body.loser button {
+            background: #ff69b4;
+        }
+        body.loser button:hover {
+            background: #c2185b;
+        }
+        body.loser h1 {
+            color: #ffb6c1;
+            text-shadow: 0 0 10px #ff69b4;
+        }
+            .Start {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 0.8em 1.5em;
+      font-size: 1.2em;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      background-color: #4f8cff;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 12px #0002;
+      transition: background 0.3s, transform 0.2s;
+    }
+    @media (max-width: 480px) {
+  .game-container {
+    width: 95%;
+    font-size: 0.9rem;
+    padding: 15px;
+  }
+}
+@media (min-width: 481px) and (max-width: 1024px) {
+  .game-container {
+    width: 90%;
+    font-size: 1rem;
+    padding: 18px;
+  }
+}
+@media (min-width: 1920px) {
+  .game-container {
+    width: 50%;
+    font-size: 1.6rem;
+    padding: 30px;
+  }
+}
+body.speed {
+            background: linear-gradient(135deg, #ff8c00, #ffd700);
+            color: #000;
+        }
+        body.speed .container {
+            background: rgba(255, 255, 255, 0.95);
+        }
+        body.speed button {
+            background: #ffa500;
+        }
+        body.speed button:hover {
+            background: #ff4500;
+        }
+        body.speed h1 {
+            color: #ff6347;
+            text-shadow: 0 0 10px #ffa500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="title">Guess the Number!</h1>
+        <p>I'm thinking of a number between <span id="min">1</span> and <span id="max">20</span>. Can you guess it?</p>
+        <input type="number" id="guessInput" min="1" max="20">
+        <button id="guessBtn">Guess</button>
+        <div class="message" id="message"></div>
+        <div class="score" id="score">Score: 0</div>
+    </div>
+    <div id="currentModeDisplay" style="margin-top: 1em; font-size: 1.2em; font-weight: bold;"></div>
+
+      <a href="index.html">
+    <button class="Start">End Game</button>
+  </a>
+<script>
+    let min = 1,
+        max = 20,
+        number = Math.floor(Math.random() * (max - min + 1)) + min,
+        score = 0,
+        tries = 0,
+        fails = 0,
+        firstTry = true,
+        imperator = false,
+        detective = false,
+        ultrahard = false;
+
+    const guessInput = document.getElementById('guessInput');
+    const guessBtn = document.getElementById('guessBtn');
+    const message = document.getElementById('message');
+    const scoreDisplay = document.getElementById('score');
+    const title = document.getElementById('title');
+    const minSpan = document.getElementById('min');
+    const maxSpan = document.getElementById('max');
+
+    function updateRange() {
+        minSpan.textContent = min;
+        maxSpan.textContent = max;
+        guessInput.min = min;
+        guessInput.max = max;
+    }
+
+    function resetNumber() {
+        number = Math.floor(Math.random() * (max - min + 1)) + min;
+        firstTry = true;
+    }
+
+    function unlockMode(mode) {
+        let unlocked = JSON.parse(localStorage.getItem('unlockedModes') || '[]');
+        if (!unlocked.includes(mode)) {
+            unlocked.push(mode);
+            localStorage.setItem('unlockedModes', JSON.stringify(unlocked));
+        }
+
+        // Если все 4 режима открыты — даём достижение
+        if (["imperator", "detective", "ultrahard", "loser"].every(m => unlocked.includes(m))) {
+            unlockAchievement("All Modes");
+        }
+    }
+
+    function unlockAchievement(name) {
+        let achievements = JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+        if (!achievements.includes(name)) {
+            achievements.push(name);
+            localStorage.setItem('unlockedAchievements', JSON.stringify(achievements));
+        }
+    }
+
+    function enterMode(mode) {
+        document.body.className = mode;
+        imperator = detective = ultrahard = false;
+        localStorage.setItem('gameMode', mode);
+        unlockMode(mode);
+
+        if (mode === 'imperator') {
+            imperator = true;
+            min = 1;
+            max = 50;
+            tries = 10;
+            title.textContent = "IMPERATOR MODE";
+            message.textContent = "Guess the number from 1 to 50. You have 10 tries!";
+        } else if (mode === 'detective') {
+            detective = true;
+            min = 1;
+            max = 5;
+            title.textContent = "DETECTIVE MODE";
+            message.textContent = "Detect the number from 1 to 5. One try only!";
+        } else if (mode === 'ultrahard') {
+            ultrahard = true;
+            min = 1;
+            max = 100;
+            tries = 15;
+            title.textContent = "ULTRA HARD MODE";
+            message.textContent = "Guess the number from 1 to 100. You have 15 tries!";
+        } else if (mode === 'loser') {
+            min = 1;
+            max = 20;
+            title.textContent = "LOSER MODE";
+            message.textContent = "You lost 10 times in a row. Reflect and retry!";
+        } else {
+            // Normal mode
+            min = 1;
+            max = 20;
+            title.textContent = "Guess the Number!";
+            message.textContent = "I'm thinking of a number between 1 and 20. Can you guess it?";
+        }
+
+        updateRange();
+        resetNumber();
+        guessInput.disabled = false;
+        guessBtn.disabled = false;
+        guessInput.value = '';
+        scoreDisplay.textContent = `Score: ${score}`;
+    }
+
+    function completeModeAndReturnToNormal() {
+        const currentMode = localStorage.getItem("gameMode");
+
+        if (currentMode && currentMode !== "normal") {
+            alert(`Вы прошли режим: ${currentMode}! Возврат в обычный режим.`);
+            localStorage.setItem("gameMode", "normal");
+            enterMode("normal");
+        }
+    }
+
+    guessBtn.addEventListener('click', () => {
+        const guess = parseInt(guessInput.value);
+        if (isNaN(guess) || guess < min || guess > max) {
+            message.textContent = `Enter a number from ${min} to ${max}.`;
+            return;
+        }
+
+        if (!imperator && !detective && !ultrahard && guess === 45) {
+            enterMode('detective');
+            return;
+        }
+
+        if (imperator || ultrahard) {
+            tries--;
+            if (guess === number) {
+                message.textContent = "Correct! You win this mode!";
+                guessBtn.disabled = true;
+                guessInput.disabled = true;
+                fails = 0;
+                if (imperator) unlockAchievement("Imperator Victory");
+                if (ultrahard) unlockAchievement("Ultra-hard Survivor");
+                completeModeAndReturnToNormal();
+            } else if (tries > 0) {
+                message.textContent = (guess < number ? "Too low! " : "Too high! ") + `Tries left: ${tries}`;
+            } else {
+                message.textContent = `Out of tries! Number was ${number}`;
+                guessBtn.disabled = true;
+                guessInput.disabled = true;
+                fails++;
+                if (fails >= 10) {
+                    enterMode('loser');
+                    fails = 0;
+                    unlockAchievement("10 Fails");
+                }
+            }
+        } else if (detective) {
+            if (firstTry && guess === number) {
+                message.textContent = "Brilliant detective work!";
+                fails = 0;
+                unlockAchievement("Detective Genius");
+                completeModeAndReturnToNormal();
+            } else {
+                message.textContent = `Wrong! It was ${number}.`;
+                fails++;
+                if (fails >= 10) {
+                    enterMode('loser');
+                    fails = 0;
+                    unlockAchievement("10 Fails");
+                }
+            }
+            guessBtn.disabled = true;
+            guessInput.disabled = true;
+        } else {
+            // Normal mode
+            if (guess === number) {
+                score++;
+                message.textContent = "Correct! New number generated.";
+                resetNumber();
+                guessInput.value = '';
+                firstTry = true;
+                fails = 0;
+                if (score === 1) unlockAchievement("First Win");
+                if (score === 10) enterMode('imperator');
+            } else {
+                message.textContent = guess < number ? "Too low! Try again." : "Too high! Try again.";
+                firstTry = false;
+                fails++;
+                if (fails >= 10) {
+                    enterMode('loser');
+                    fails = 0;
+                    unlockAchievement("10 Fails");
+                }
+            }
+        }
+        scoreDisplay.textContent = `Score: ${score}`;
+    });
+
+    guessInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            guessBtn.click();
+        }
+    });
+
+    // При запуске — загружаем режим из localStorage
+    const savedMode = localStorage.getItem('gameMode') || 'normal';
+    enterMode(savedMode);
+    // ===== ПОКАЗ ТЕКУЩЕГО РЕЖИМА =====
+function displayCurrentMode() {
+  const mode = localStorage.getItem("gameMode") || "normal";
+  const display = document.getElementById("currentModeDisplay");
+  let text = "";
+
+  switch (mode) {
+    case "imperator": text = "Current Mode: Imperator"; break;
+    case "detective": text = "Current Mode: Detective"; break;
+    case "ultrahard": text = "Current Mode: Ultra-Hard"; break;
+    case "loser": text = "Current Mode: Loser"; break;
+    case "speed": text = "Current Mode: Speed"; break;
+    default: text = "Current Mode: Normal";
+  }
+
+  display.textContent = text;
+}
+displayCurrentMode();
+
+</script>
+
+</body>
+</html>
